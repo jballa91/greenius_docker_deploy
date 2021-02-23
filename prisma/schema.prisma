@@ -1,0 +1,91 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id Int @id @default(autoincrement())
+  username String @unique
+  email String @unique
+  hashword String
+  song_posts Song[] @relation("posted_by")
+  song_likes Song[] @relation("song_liked_by")
+  song_dislikes Song[] @relation("song_disliked_by")
+  song_comment_posts SongComment[] @relation("song_comment_posted_by")
+  song_comment_likes SongComment[] @relation("song_comment_liked_by")
+  song_comment_dislikes SongComment[] @relation("song_comment_disliked_by")
+  annotation_posts Annotation[] @relation("song_annotation_posted_by")
+  annotation_likes Annotation[] @relation("song_annotation_liked_by")
+  annotation_dislikes Annotation[] @relation("song_annotation_disliked_by")
+  annotation_comment_posts AnnotationComment[] @relation("annotation_comment_posted_by")
+  annotation_comment_likes AnnotationComment[] @relation("annotation_comment_liked_by")
+  annotation_comment_dislikes AnnotationComment[] @relation("annotation_comment_disliked_by")
+}
+
+model Artist {
+  id Int @id @default(autoincrement())
+  name String
+  genre String
+  songs Song[]
+}
+
+model Song {
+  id Int @id @default(autoincrement())
+  name String
+  genre String
+  artist_id Int
+  artist Artist @relation(fields: [artist_id], references: [id])
+  lyrics String[]
+  img String
+  liked_by User[] @relation("song_liked_by")
+  disliked_by User[] @relation("song_disliked_by")
+  comments SongComment[]
+  annotations Annotation[]
+  user_id Int
+  posted_by User @relation("posted_by", fields: [user_id], references: [id])
+  created_at DateTime @default(now())
+}
+
+model SongComment {
+  id Int @id @default(autoincrement())
+  content String
+  song_id Int
+  song Song @relation(fields: [song_id], references: [id])
+  user_id Int
+  posted_by User @relation("song_comment_posted_by", fields: [user_id], references: [id])
+  liked_by User[] @relation("song_comment_liked_by")
+  disliked_by User[] @relation("song_comment_disliked_by")
+  created_at DateTime @default(now())
+}
+
+model Annotation {
+  id Int @id @default(autoincrement())
+  start_index Int
+  end_index Int
+  content String
+  song_id Int
+  song Song @relation(fields: [song_id], references: [id])
+  user_id Int
+  posted_by User @relation("song_annotation_posted_by", fields: [user_id], references: [id])
+  liked_by User[] @relation("song_annotation_liked_by")
+  disliked_by User[] @relation("song_annotation_disliked_by")
+  created_at DateTime @default(now())
+}
+
+model AnnotationComment {
+  id Int @id @default(autoincrement())
+  content String
+  annotation_id Int
+  annotation Annotation @relation(fields: [annotation_id], references: [id])
+  posted_by User @relation("annotation_comment_posted_by")
+  liked_by User[] @relation("annotation_comment_liked_by")
+  disliked_by User[] @relation("annotation_comment_disliked_by")
+  created_at DateTime @default(now())
+}
