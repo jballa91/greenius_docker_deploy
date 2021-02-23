@@ -4,7 +4,7 @@ const cors = require("cors");
 const helmet = require("helmet");
 const path = require("path");
 const morgan = require("morgan");
-// const routes = require("./routes");
+const routes = require("./routes");
 
 const app = express();
 
@@ -16,7 +16,7 @@ app.use(cookieParser());
 
 app.use(cors({ origin: true }));
 app.use(helmet({ hsts: false, contentSecurityPolicy: false }));
-// app.use(routes);
+app.use(routes);
 
 if (process.env.NODE_ENV === "production") {
   app.use(express.static(path.join("client/build")));
