@@ -8,6 +8,7 @@ datasource db {
 
 generator client {
   provider = "prisma-client-js"
+  previewFeatures = ["createMany"]
 }
 
 model User {
@@ -84,6 +85,7 @@ model AnnotationComment {
   content String
   annotation_id Int
   annotation Annotation @relation(fields: [annotation_id], references: [id])
+  user_id Int
   posted_by User @relation("annotation_comment_posted_by")
   liked_by User[] @relation("annotation_comment_liked_by")
   disliked_by User[] @relation("annotation_comment_disliked_by")
